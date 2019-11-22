@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <MainView title="The Title"/>
+    <MainView title="Workflow Vis"/>
   </div>
 </template>
 
