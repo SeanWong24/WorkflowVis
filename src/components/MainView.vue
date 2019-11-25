@@ -21,11 +21,20 @@
       <ion-grid>
         <ion-row>
           <ion-col size="9">
-            <VisView :dataset="dataset" />
+            <VisView
+              :dataset="dataset"
+              :visComponent1="visComponent1"
+              :visComponent2="visComponent2"
+            />
           </ion-col>
           <ion-col size="3">
             <ion-card>
-              <ControlView />
+              <ControlView
+                :visComponentList="visComponentList"
+                :visComponent1="visComponent1"
+                :visComponent2="visComponent2"
+                @visComponentChange="visComponentChangeHandler"
+              />
             </ion-card>
           </ion-col>
         </ion-row>
@@ -35,10 +44,14 @@
 </template>
 
 <script>
-import VisView from "./VisView";
-import ControlView from "./ControlView";
 import { addIcons } from "ionicons";
 import { cloudUpload } from "ionicons/icons";
+
+import VisView from "./VisView";
+import ControlView from "./ControlView";
+
+import TimePerformanceVisView from "./TimePerformanceVisView";
+import ErrorProportionDonutVisView from "./ErrorProportionDonutVisView";
 
 addIcons({
   "md-cloud-upload": cloudUpload.md,
@@ -56,7 +69,10 @@ export default {
   },
   data: () => ({
     datasetFile: File,
-    dataset: null
+    dataset: null,
+    visComponentList: [TimePerformanceVisView, ErrorProportionDonutVisView],
+    visComponent1: TimePerformanceVisView,
+    visComponent2: ErrorProportionDonutVisView
   }),
   computed: {
     datasetName: {
@@ -89,6 +105,16 @@ export default {
         fileReader.readAsText(this.datasetFile);
       } else {
         this.dataset = null;
+      }
+    },
+    visComponentChangeHandler({ index, component }) {
+      switch (index) {
+        case 1:
+          this.visComponent1 = component;
+          break;
+        case 2:
+          this.visComponent2 = component;
+          break;
       }
     }
   }

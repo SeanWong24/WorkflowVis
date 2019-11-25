@@ -3,7 +3,8 @@
     <ion-row>
       <ion-col>
         <ion-card>
-          <TimePerformanceVisView
+          <component
+            :is="visComponent1"
             :dataset="dataset"
             @filteredDataChanged="filteredDataChangeHandlerForVis1"
           />
@@ -11,7 +12,7 @@
       </ion-col>
       <ion-col>
         <ion-card>
-          <ErrorProportionDonutVisView :dataset="dataForVis2" />
+          <component :is="visComponent2" :dataset="dataForVis2" />
         </ion-card>
       </ion-col>
     </ion-row>
@@ -27,16 +28,14 @@
 </template>
 
 <script>
+// eslint-disable-next-line
 import TimePerformanceVisView from "./TimePerformanceVisView";
+// eslint-disable-next-line
 import ErrorProportionDonutVisView from "./ErrorProportionDonutVisView";
 
 export default {
   name: "VisView",
-  components: {
-    TimePerformanceVisView,
-    ErrorProportionDonutVisView
-  },
-  props: ["dataset"],
+  props: ["dataset", "visComponent1", "visComponent2"],
   watch: {
     dataset: function(value) {
       this.dataForVis2 = value;

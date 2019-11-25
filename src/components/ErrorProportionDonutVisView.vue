@@ -19,6 +19,11 @@ export default {
       this.generateVis(value);
     }
   },
+  mounted: function() {
+    if (this.dataset) {
+      this.generateVis(this.dataset);
+    }
+  },
   methods: {
     generateVis(value) {
       const width = 500;

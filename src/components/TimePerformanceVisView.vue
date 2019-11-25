@@ -37,6 +37,11 @@ export default {
       }
     }
   },
+  mounted: function() {
+    if (this.dataset) {
+      this.generateVis(this.dataset);
+    }
+  },
   methods: {
     generateVis(value) {
       const svgElement = d3.select(this.$refs.mainSvg);
