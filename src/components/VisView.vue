@@ -10,7 +10,9 @@
         </ion-card>
       </ion-col>
       <ion-col>
-        <ion-card>Vis 2</ion-card>
+        <ion-card>
+          <ErrorProportionDonutVisView :dataset="dataForVis2" />
+        </ion-card>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -26,14 +28,21 @@
 
 <script>
 import TimePerformanceVisView from "./TimePerformanceVisView";
+import ErrorProportionDonutVisView from "./ErrorProportionDonutVisView";
 
 export default {
   name: "VisView",
   components: {
-    TimePerformanceVisView
+    TimePerformanceVisView,
+    ErrorProportionDonutVisView
   },
-  props: {
-    dataset: null
+  props: ["dataset"],
+  watch: {
+    dataset: function(value) {
+      this.dataForVis2 = value;
+      this.dataForVis3 = value;
+      this.dataForVis4 = value;
+    }
   },
   data: () => ({
     dataForVis2: null,
