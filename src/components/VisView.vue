@@ -2,7 +2,12 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-        <ion-card>Vis 1</ion-card>
+        <ion-card>
+          <TimePerformanceVisView
+            :dataset="dataset"
+            @filteredDataChanged="filteredDataChangeHandlerForVis1"
+          />
+        </ion-card>
       </ion-col>
       <ion-col>
         <ion-card>Vis 2</ion-card>
@@ -20,8 +25,26 @@
 </template>
 
 <script>
+import TimePerformanceVisView from "./TimePerformanceVisView";
+
 export default {
-  name: "VisView"
+  name: "VisView",
+  components: {
+    TimePerformanceVisView
+  },
+  props: {
+    dataset: null
+  },
+  data: () => ({
+    dataForVis2: null,
+    dataForVis3: null,
+    dataForVis4: null
+  }),
+  methods: {
+    filteredDataChangeHandlerForVis1(data) {
+      this.dataForVis2 = data;
+    }
+  }
 };
 </script>
 

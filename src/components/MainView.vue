@@ -21,7 +21,7 @@
       <ion-grid>
         <ion-row>
           <ion-col size="9">
-            <VisView />
+            <VisView :dataset="dataset" />
           </ion-col>
           <ion-col size="3">
             <ion-card>
