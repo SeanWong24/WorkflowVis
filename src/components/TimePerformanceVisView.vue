@@ -124,12 +124,12 @@ export default {
 
       const yAxisCpu = svgElement
         .append("g")
-        .attr("transform", "translate(50, 0)")
-        .call(d3.axisLeft(yScaleCpu).tickFormat(d => d + "%"));
+        .attr("transform", "translate(50, 0)");
+      yAxisCpu.call(d3.axisLeft(yScaleCpu).tickFormat(d => d + "%"));
       const yAxisMemory = svgElement
         .append("g")
-        .attr("transform", "translate(425, 0)")
-        .call(d3.axisRight(yScaleMemory));
+        .attr("transform", "translate(425, 0)");
+      yAxisMemory.call(d3.axisRight(yScaleMemory));
 
       const guideBoxes = svgElement
         .append("g")
