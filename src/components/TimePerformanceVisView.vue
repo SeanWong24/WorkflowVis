@@ -51,6 +51,12 @@ export default {
         .filter(node => node.label === "module")
         .sort((a, b) => Date.parse(a.time) - Date.parse(b.time));
 
+      const mockLastModule = JSON.parse(
+        JSON.stringify(modules[modules.length - 1])
+      );
+      mockLastModule.time = mockLastModule.time_run;
+      modules.push(mockLastModule);
+
       const xScale = d3
         .scaleTime()
         .domain([
