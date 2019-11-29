@@ -10,7 +10,7 @@ export default {
   props: ["dataset"],
   watch: {
     dataset: function(value) {
-      this.generateVis(value);
+      this.refresh(value);
     }
   },
   data: () => ({
@@ -39,10 +39,15 @@ export default {
   },
   mounted: function() {
     if (this.dataset) {
-      this.generateVis(this.dataset);
+      this.refresh(this.dataset);
     }
   },
   methods: {
+    refresh(value) {
+      this.selectedModules = [];
+      this.$emit("filteredDataChanged", this.filteredData);
+      this.generateVis(value);
+    },
     generateVis(value) {
       const svgElement = d3.select(this.$refs.mainSvg);
       svgElement.selectAll("*").remove();

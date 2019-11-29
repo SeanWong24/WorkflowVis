@@ -25,6 +25,13 @@
               :dataset="dataset"
               :visComponent1="visComponent1"
               :visComponent2="visComponent2"
+              :visComponent3="visComponent3"
+              :visComponent4="visComponent4"
+              :dataForVis1="dataForVis1"
+              :dataForVis2="dataForVis2"
+              :dataForVis3="dataForVis3"
+              :dataForVis4="dataForVis4"
+              @visFilteredDataChange="visFilteredDataChangeHandler"
             />
           </ion-col>
           <ion-col size="3">
@@ -33,7 +40,14 @@
                 :visComponentList="visComponentList"
                 :visComponent1="visComponent1"
                 :visComponent2="visComponent2"
+                :visComponent3="visComponent3"
+                :visComponent4="visComponent4"
+                :dataSourceVis1="dataSourceVis1"
+                :dataSourceVis2="dataSourceVis2"
+                :dataSourceVis3="dataSourceVis3"
+                :dataSourceVis4="dataSourceVis4"
                 @visComponentChange="visComponentChangeHandler"
+                @visDataSourceChange="visDataSourceChangeHandler"
               />
             </ion-card>
           </ion-col>
@@ -68,11 +82,25 @@ export default {
     title: String
   },
   data: () => ({
+    _dataset: null,
     datasetFile: File,
-    dataset: null,
     visComponentList: [TimePerformanceVisView, ErrorProportionDonutVisView],
     visComponent1: TimePerformanceVisView,
-    visComponent2: ErrorProportionDonutVisView
+    visComponent2: TimePerformanceVisView,
+    visComponent3: TimePerformanceVisView,
+    visComponent4: TimePerformanceVisView,
+    filteredDataVis1: null,
+    filteredDataVis2: null,
+    filteredDataVis3: null,
+    filteredDataVis4: null,
+    dataSourceVis1: 0,
+    dataSourceVis2: 1,
+    dataSourceVis3: 2,
+    dataSourceVis4: 3,
+    dataForVis1: null,
+    dataForVis2: null,
+    dataForVis3: null,
+    dataForVis4: null
   }),
   computed: {
     datasetName: {
@@ -84,6 +112,18 @@ export default {
         return this.datasetFile && this.dataset
           ? fileName
           : "No Dataset Loaded";
+      }
+    },
+    dataset: {
+      get() {
+        return this.$data._dataset;
+      },
+      set(value) {
+        this.$data._dataset = value;
+        this.dataForVis1 = this.dataset;
+        this.dataForVis2 = this.dataset;
+        this.dataForVis3 = this.dataset;
+        this.dataForVis4 = this.dataset;
       }
     }
   },
@@ -115,6 +155,25 @@ export default {
         case 2:
           this.visComponent2 = component;
           break;
+        case 3:
+          this.visComponent3 = component;
+          break;
+        case 4:
+          this.visComponent4 = component;
+          break;
+      }
+    },
+    visDataSourceChangeHandler({ index, sourceIndex }) {
+      this["dataSourceVis" + index] = sourceIndex;
+      this["dataForVis" + index] =
+        sourceIndex > 0 ? this["filteredDataVis" + sourceIndex] : this.dataset;
+    },
+    visFilteredDataChangeHandler({ index, data }) {
+      this["filteredDataVis" + index] = data;
+      for (let i = 1; i <= 4; i++) {
+        if (this["dataSourceVis" + i] == index) {
+          this["dataForVis" + i] = data;
+        }
       }
     }
   }
@@ -134,6 +193,10 @@ ion-grid {
 }
 
 ion-row {
+  height: 100%;
+}
+
+ion-col {
   height: 100%;
 }
 
