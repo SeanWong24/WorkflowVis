@@ -196,7 +196,7 @@ export default {
           d =>
             d.data[0] +
             "\n" +
-            ((d.value / modules.length / 2) * 100).toFixed(2) +
+            ((d.value / modules.length) * 100).toFixed(2) +
             "%"
         );
     },
