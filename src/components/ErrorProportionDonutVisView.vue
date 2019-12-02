@@ -16,22 +16,73 @@ export default {
   props: ["dataset"],
   watch: {
     dataset: function(value) {
-      this.generateVis(value);
+      this.refresh(this.dataset);
+    }
+  },
+  data: () => ({
+    selectedPartitionMap: new Map()
+  }),
+  computed: {
+    filteredData: {
+      get: function() {
+        const selectedPartitionList = Array.from(
+          this.selectedPartitionMap.entries()
+        )
+          .flatMap(d => [
+            {
+              moduleName: d[0],
+              status: "success",
+              isSelected: d[1].get("success")
+            },
+            {
+              moduleName: d[0],
+              status: "error",
+              isSelected: d[1].get("error")
+            }
+          ])
+          .filter(d => d.isSelected);
+        if (selectedPartitionList.length > 0) {
+          const nodes = this.dataset.nodes.filter(
+            node =>
+              node.label !== "module" ||
+              selectedPartitionList.find(
+                d =>
+                  node.NAME === d.moduleName &&
+                  (d.status === "success"
+                    ? node.error === "null"
+                    : node.error !== "null")
+              )
+          );
+          const edges = this.dataset.edges.filter(edge =>
+            nodes.find(
+              module => module.id === edge.source || module.id === edge.target
+            )
+          );
+          return { nodes, edges };
+        } else {
+          return this.dataset;
+        }
+      }
     }
   },
   mounted: function() {
     if (this.dataset) {
-      this.generateVis(this.dataset);
+      this.refresh(this.dataset);
     }
   },
   methods: {
+    refresh(value) {
+      this.selectedPartitionMap = new Map();
+      this.$emit("filteredDataChanged", this.filteredData);
+      this.generateVis(value);
+    },
     generateVis(value) {
       const width = 500;
       const height = 500;
-      const margin = 50;
 
       const svgElement = d3.select(this.$refs.mainSvg);
       svgElement.selectAll("*").remove();
+      this.selectedPartitionMap = new Map();
 
       const gElement = svgElement
         .append("g")
@@ -39,61 +90,30 @@ export default {
 
       const modules = value.nodes.filter(node => node.label === "module");
 
-      var Entropy = 0;
-      var Entropy_Success = 0;
-      var FastQC = 0;
-      var FastQC_Success = 0;
-      var MaxMinProb = 0;
-      var MaxMinProb_Success = 0;
-      var DNALetterCount = 0;
-      var DNALetterCount_Success = 0;
-      for (let i in modules) {
-        if (modules[i].NAME === "Entropy") {
-          Entropy = Entropy + 1;
-          Entropy_Success = Entropy;
-          if (modules[i].error !== "null") {
-            Entropy_Success = Entropy_Success - 1;
-          }
+      const data = {};
+      for (const module of modules) {
+        if (!data[module.NAME]) {
+          data[module.NAME] = [];
+
+          const tempMap = new Map();
+          tempMap.set("success", false);
+          tempMap.set("error", false);
+          this.selectedPartitionMap.set(module.NAME, tempMap);
         }
-        if (modules[i].NAME === "FastQC") {
-          FastQC = FastQC + 1;
-          FastQC_Success = FastQC;
-          if (modules[i].error !== "null") {
-            FastQC_Success = FastQC_Success - 1;
-          }
-        }
-        if (modules[i].NAME === "MaxMinProb") {
-          MaxMinProb = MaxMinProb + 1;
-          MaxMinProb_Success = MaxMinProb;
-          if (modules[i].error !== "null") {
-            MaxMinProb_Success = MaxMinProb_Success - 1;
-          }
-        }
-        if (modules[i].NAME === "DNALetterCount") {
-          DNALetterCount = DNALetterCount + 1;
-          DNALetterCount_Success = DNALetterCount;
-          if (modules[i].error !== "null") {
-            DNALetterCount = DNALetterCount - 1;
-          }
-        }
+        data[module.NAME].push(module);
       }
 
-      const dataInner = {
-        Entropy: Entropy,
-        FastQC: FastQC,
-        MaxMinProb: MaxMinProb,
-        DNALetterCount: DNALetterCount
-      };
-      const dataOutter = {
-        Entropy_Success: Entropy_Success,
-        Entropy_Error: Entropy - Entropy_Success,
-        FastQC_Success: FastQC_Success,
-        FastQC_Error: FastQC - FastQC_Success,
-        MaxMinProb_Success: MaxMinProb_Success,
-        MaxMinProb_Error: MaxMinProb - MaxMinProb_Success,
-        DNALetterCount_Success: DNALetterCount_Success,
-        DNALetterCount_Error: DNALetterCount - DNALetterCount_Success
-      };
+      const pie = d3
+        .pie()
+        .value(d => d[1].length)
+        .sort(null);
+      const pieInner = pie(Object.entries(data));
+      const pieOutter = pie(
+        Object.entries(data).flatMap(d => [
+          [d[0] + "_success", d[1].filter(module => module.error === "null")],
+          [d[0] + "_error", d[1].filter(module => module.error !== "null")]
+        ])
+      );
 
       const colorScaleInner = d3
         .scaleOrdinal(d3.schemeAccent)
@@ -109,36 +129,10 @@ export default {
         .domain([true, false])
         .range(["green", "red"]);
 
-      var pie = d3.pie().value(function(d) {
-        return d.value;
-      });
-      var data_ready = pie(d3.entries(dataOutter));
-      var d_ready = pie(d3.entries(dataInner));
-
-      gElement
-        .append("g")
+      const gInnerPie = gElement.append("g");
+      const innerPiePaths = gInnerPie
         .selectAll("path")
-        .data(data_ready)
-        .enter()
-        .append("path")
-        .attr(
-          "d",
-          d3
-            .arc()
-            .innerRadius(100)
-            .outerRadius(150)
-        )
-        .attr("fill", function(d) {
-          return colorScaleOutter(d.data.key.split("_")[1] === "Success");
-        })
-        .attr("stroke", "black")
-        .style("stroke-width", "2px")
-        .style("opacity", 0.7);
-
-      gElement
-        .append("g")
-        .selectAll("path")
-        .data(d_ready)
+        .data(pieInner)
         .enter()
         .append("path")
         .attr(
@@ -148,12 +142,87 @@ export default {
             .innerRadius(50)
             .outerRadius(100)
         )
-        .attr("fill", function(d) {
-          return colorScaleInner(d.data.key);
-        })
+        .attr("fill", d => colorScaleInner(d.data[0]))
         .attr("stroke", "black")
-        .style("stroke-width", "2px")
-        .style("opacity", 0.7);
+        .attr("stroke-width", "2px")
+        .attr("opacity", 0.7)
+        .style("cursor", "pointer")
+        .on("click", d => {
+          const tempMap = this.selectedPartitionMap.get(d.data[0]);
+          const previousValue = tempMap.get("success") && tempMap.get("error");
+          tempMap.set("success", !previousValue);
+          tempMap.set("error", !previousValue);
+          this.updateSelection();
+        });
+      innerPiePaths
+        .append("title")
+        .text(
+          d =>
+            d.data[0] +
+            "\n" +
+            ((d.value / modules.length) * 100).toFixed(2) +
+            "%"
+        );
+
+      const gOutterPie = gElement.append("g");
+      const outterPiePaths = gOutterPie
+        .selectAll("path")
+        .data(pieOutter)
+        .enter()
+        .append("path")
+        .attr(
+          "d",
+          d3
+            .arc()
+            .innerRadius(100)
+            .outerRadius(150)
+        )
+        .attr("fill", d =>
+          colorScaleOutter(d.data[0].split("_")[1] === "success")
+        )
+        .attr("stroke", "black")
+        .attr("stroke-width", "2px")
+        .attr("opacity", 0.7)
+        .style("cursor", "pointer")
+        .on("click", d => {
+          const [moduleName, status] = d.data[0].split("_");
+          const tempMap = this.selectedPartitionMap.get(moduleName);
+          tempMap.set(status, !tempMap.get(status));
+          this.updateSelection();
+        });
+      outterPiePaths
+        .append("title")
+        .text(
+          d =>
+            d.data[0] +
+            "\n" +
+            ((d.value / modules.length / 2) * 100).toFixed(2) +
+            "%"
+        );
+    },
+    updateSelection() {
+      d3.select(this.$refs.mainSvg)
+        .select("g")
+        .selectAll("g")
+        .selectAll("path")
+        .attr("stroke-width", d => {
+          const [moduleName, status] = d.data[0].split("_");
+          let isSelected = false;
+          if (status) {
+            const tempMap = this.selectedPartitionMap.get(moduleName);
+            isSelected = tempMap.get(status);
+          } else {
+            const tempMap = this.selectedPartitionMap.get(moduleName);
+            isSelected = tempMap.get("success") && tempMap.get("error");
+          }
+          return isSelected ? "5px" : "2px";
+        });
+
+      const temp = this.selectedPartitionMap;
+      this.selectedPartitionMap = null;
+      this.selectedPartitionMap = temp;
+
+      this.$emit("filteredDataChanged", this.filteredData);
     }
   }
 };
