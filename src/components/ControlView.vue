@@ -74,7 +74,7 @@ export default {
         case 3:
           return "Vis 3 (Lower-Left)";
         case 4:
-          return "Vis 4 (Upper-Right)";
+          return "Vis 4 (Lower-Right)";
       }
     },
     obtainVisComponent(index) {
