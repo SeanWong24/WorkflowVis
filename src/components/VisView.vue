@@ -6,7 +6,7 @@
           <component
             :is="visComponent1"
             :dataset="dataForVis1"
-            @filteredDataChanged="filteredDataChangeHandlerForVis1"
+            @filteredDataChange="filteredDataChangeHandlerForVis1"
           />
         </ion-card>
       </ion-col>
@@ -15,7 +15,7 @@
           <component
             :is="visComponent2"
             :dataset="dataForVis2"
-            @filteredDataChanged="filteredDataChangeHandlerForVis2"
+            @filteredDataChange="filteredDataChangeHandlerForVis2"
           />
         </ion-card>
       </ion-col>
@@ -26,7 +26,7 @@
           <component
             :is="visComponent3"
             :dataset="dataForVis3"
-            @filteredDataChanged="filteredDataChangeHandlerForVis3"
+            @filteredDataChange="filteredDataChangeHandlerForVis3"
           />
         </ion-card>
       </ion-col>
@@ -35,7 +35,7 @@
           <component
             :is="visComponent4"
             :dataset="dataForVis4"
-            @filteredDataChanged="filteredDataChangeHandlerForVis4"
+            @filteredDataChange="filteredDataChangeHandlerForVis4"
           />
         </ion-card>
       </ion-col>

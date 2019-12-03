@@ -66,7 +66,7 @@ export default {
     obtainVisDisplayLabel(index) {
       switch (index) {
         case 0:
-          return "Main";
+          return "Default";
         case 1:
           return "Vis 1 (Upper-Left)";
         case 2:

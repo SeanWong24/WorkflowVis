@@ -64,6 +64,7 @@ import { cloudUpload } from "ionicons/icons";
 import VisView from "./VisView";
 import ControlView from "./ControlView";
 
+import DefaultVisView from "./DefaultVisView";
 import TimePerformanceVisView from "./TimePerformanceVisView";
 import ErrorProportionDonutVisView from "./ErrorProportionDonutVisView";
 
@@ -84,11 +85,15 @@ export default {
   data: () => ({
     _dataset: null,
     datasetFile: File,
-    visComponentList: [TimePerformanceVisView, ErrorProportionDonutVisView],
-    visComponent1: TimePerformanceVisView,
-    visComponent2: TimePerformanceVisView,
-    visComponent3: TimePerformanceVisView,
-    visComponent4: TimePerformanceVisView,
+    visComponentList: [
+      DefaultVisView,
+      TimePerformanceVisView,
+      ErrorProportionDonutVisView
+    ],
+    visComponent1: DefaultVisView,
+    visComponent2: DefaultVisView,
+    visComponent3: DefaultVisView,
+    visComponent4: DefaultVisView,
     filteredDataVis1: null,
     filteredDataVis2: null,
     filteredDataVis3: null,

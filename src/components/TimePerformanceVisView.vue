@@ -5,14 +5,11 @@
 <script>
 import * as d3 from "d3";
 
+import DefaultVisView from "./DefaultVisView";
+
 export default {
   name: "TimePerformanceVisView",
-  props: ["dataset"],
-  watch: {
-    dataset: function(value) {
-      this.refresh(value);
-    }
-  },
+  extends: DefaultVisView,
   data: () => ({
     selectedModules: []
   }),
@@ -37,16 +34,9 @@ export default {
       }
     }
   },
-  mounted: function() {
-    if (this.dataset) {
-      this.refresh(this.dataset);
-    }
-  },
   methods: {
-    refresh(value) {
+    resetFilter() {
       this.selectedModules = [];
-      this.$emit("filteredDataChanged", this.filteredData);
-      this.generateVis(value);
     },
     generateVis(value) {
       const svgElement = d3.select(this.$refs.mainSvg);
@@ -186,7 +176,7 @@ export default {
             this.selectedModules.push(module);
             d3.select(d3.event.target).style("opacity", 0.5);
           }
-          this.$emit("filteredDataChanged", this.filteredData);
+          this.$emit("filteredDataChange", this.filteredData);
         });
       guideBoxes
         .append("title")

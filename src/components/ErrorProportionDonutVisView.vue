@@ -11,14 +11,11 @@
 <script>
 import * as d3 from "d3";
 
+import DefaultVisView from "./DefaultVisView";
+
 export default {
   name: "ErrorProportionDonutVisView",
-  props: ["dataset"],
-  watch: {
-    dataset: function(value) {
-      this.refresh(this.dataset);
-    }
-  },
+  extends: DefaultVisView,
   data: () => ({
     selectedPartitionMap: new Map()
   }),
@@ -65,16 +62,9 @@ export default {
       }
     }
   },
-  mounted: function() {
-    if (this.dataset) {
-      this.refresh(this.dataset);
-    }
-  },
   methods: {
-    refresh(value) {
+    resetFilter() {
       this.selectedPartitionMap = new Map();
-      this.$emit("filteredDataChanged", this.filteredData);
-      this.generateVis(value);
     },
     generateVis(value) {
       const width = 500;
@@ -222,7 +212,7 @@ export default {
       this.selectedPartitionMap = null;
       this.selectedPartitionMap = temp;
 
-      this.$emit("filteredDataChanged", this.filteredData);
+      this.$emit("filteredDataChange", this.filteredData);
     }
   }
 };
