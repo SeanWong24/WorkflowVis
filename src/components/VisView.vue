@@ -6,6 +6,7 @@
           <component
             :is="visComponent1"
             :dataset="dataForVis1"
+            :completeDataset="dataset"
             @filteredDataChange="filteredDataChangeHandlerForVis1"
           />
         </ion-card>
@@ -15,6 +16,7 @@
           <component
             :is="visComponent2"
             :dataset="dataForVis2"
+            :completeDataset="dataset"
             @filteredDataChange="filteredDataChangeHandlerForVis2"
           />
         </ion-card>
@@ -26,6 +28,7 @@
           <component
             :is="visComponent3"
             :dataset="dataForVis3"
+            :completeDataset="dataset"
             @filteredDataChange="filteredDataChangeHandlerForVis3"
           />
         </ion-card>
@@ -35,6 +38,7 @@
           <component
             :is="visComponent4"
             :dataset="dataForVis4"
+            :completeDataset="dataset"
             @filteredDataChange="filteredDataChangeHandlerForVis4"
           />
         </ion-card>
@@ -52,6 +56,7 @@ import ErrorProportionDonutVisView from "./ErrorProportionDonutVisView";
 export default {
   name: "VisView",
   props: [
+    "dataset",
     "visComponent1",
     "visComponent2",
     "visComponent3",

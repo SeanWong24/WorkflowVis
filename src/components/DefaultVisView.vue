@@ -8,9 +8,12 @@
 <script>
 export default {
   name: "DefaultVisView",
-  props: ["dataset"],
+  props: ["dataset", "completeDataset"],
   watch: {
     dataset: function(value) {
+      this.refresh(value);
+    },
+    completeDataset: function(value) {
       this.refresh(value);
     }
   },
