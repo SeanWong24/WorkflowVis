@@ -18,41 +18,25 @@
       </ion-toolbar>
     </ion-header>
     <ion-content fixed id="main-content">
-      <ion-grid>
-        <ion-row>
-          <ion-col size="9">
-            <VisView
-              :dataset="dataset"
-              :visComponent1="visComponent1"
-              :visComponent2="visComponent2"
-              :visComponent3="visComponent3"
-              :visComponent4="visComponent4"
-              :dataForVis1="dataForVis1"
-              :dataForVis2="dataForVis2"
-              :dataForVis3="dataForVis3"
-              :dataForVis4="dataForVis4"
-              @visFilteredDataChange="visFilteredDataChangeHandler"
-            />
-          </ion-col>
-          <ion-col size="3">
-            <ion-card>
-              <ControlView
-                :visComponentList="visComponentList"
-                :visComponent1="visComponent1"
-                :visComponent2="visComponent2"
-                :visComponent3="visComponent3"
-                :visComponent4="visComponent4"
-                :dataSourceVis1="dataSourceVis1"
-                :dataSourceVis2="dataSourceVis2"
-                :dataSourceVis3="dataSourceVis3"
-                :dataSourceVis4="dataSourceVis4"
-                @visComponentChange="visComponentChangeHandler"
-                @visDataSourceChange="visDataSourceChangeHandler"
-              />
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <VisView
+        :visComponentList="visComponentList"
+        :dataset="dataset"
+        :visComponent1="visComponent1"
+        :visComponent2="visComponent2"
+        :visComponent3="visComponent3"
+        :visComponent4="visComponent4"
+        :dataSourceVis1="dataSourceVis1"
+        :dataSourceVis2="dataSourceVis2"
+        :dataSourceVis3="dataSourceVis3"
+        :dataSourceVis4="dataSourceVis4"
+        :dataForVis1="dataForVis1"
+        :dataForVis2="dataForVis2"
+        :dataForVis3="dataForVis3"
+        :dataForVis4="dataForVis4"
+        @visFilteredDataChange="visFilteredDataChangeHandler"
+        @visComponentChange="visComponentChangeHandler"
+        @visDataSourceChange="visDataSourceChangeHandler"
+      />
     </ion-content>
   </ion-app>
 </template>
@@ -62,7 +46,6 @@ import { addIcons } from "ionicons";
 import { cloudUpload } from "ionicons/icons";
 
 import VisView from "./VisView";
-import ControlView from "./ControlView";
 
 import DefaultVisView from "./DefaultVisView";
 import TimePerformanceVisView from "./TimePerformanceVisView";
@@ -76,8 +59,7 @@ addIcons({
 export default {
   name: "MainView",
   components: {
-    VisView,
-    ControlView
+    VisView
   },
   props: {
     title: String

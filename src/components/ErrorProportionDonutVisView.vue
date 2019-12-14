@@ -15,6 +15,7 @@ import DefaultVisView from "./DefaultVisView";
 
 export default {
   name: "ErrorProportionDonutVisView",
+  displayedName: "Error Proportion Donut",
   extends: DefaultVisView,
   data: () => ({
     selectedPartitionMap: new Map()
@@ -212,7 +213,7 @@ export default {
       this.selectedPartitionMap = null;
       this.selectedPartitionMap = temp;
 
-      this.$emit("filteredDataChange", this.filteredData);
+      this.emitFilteredDataChangEvent();
     }
   }
 };

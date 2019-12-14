@@ -9,6 +9,7 @@ import DefaultVisView from "./DefaultVisView";
 
 export default {
   name: "TimePerformanceVisView",
+  displayedName: "Time Performance",
   extends: DefaultVisView,
   data: () => ({
     selectedModules: []
@@ -176,7 +177,7 @@ export default {
             this.selectedModules.push(module);
             d3.select(d3.event.target).style("opacity", 0.5);
           }
-          this.$emit("filteredDataChange", this.filteredData);
+          this.emitFilteredDataChangEvent();
         });
       guideBoxes
         .append("title")

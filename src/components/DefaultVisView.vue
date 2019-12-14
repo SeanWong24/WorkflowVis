@@ -8,7 +8,8 @@
 <script>
 export default {
   name: "DefaultVisView",
-  props: ["dataset", "completeDataset"],
+  displayedName: "Default",
+  props: ["dataset", "completeDataset", "visIndex"],
   watch: {
     dataset: function(value) {
       this.refresh(value);
@@ -32,8 +33,14 @@ export default {
   methods: {
     refresh(value) {
       this.resetFilter();
-      this.$emit("filteredDataChange", this.filteredData);
+      this.emitFilteredDataChangEvent();
       this.generateVis(value);
+    },
+    emitFilteredDataChangEvent() {
+      this.$emit("filteredDataChange", {
+        index: this.visIndex,
+        data: this.filteredData
+      });
     },
     resetFilter() {},
     generateVis() {}
