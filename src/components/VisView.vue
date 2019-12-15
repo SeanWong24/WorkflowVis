@@ -71,7 +71,7 @@
           <VisConfigView
             :visIndex="4"
             :visComponentList="visComponentList"
-            :visComponent="visComponent3"
+            :visComponent="visComponent4"
             :visDataSource="dataSourceVis4"
             @visComponentChange="visComponentChangeHandler"
             @visDataSourceChange="visDataSourceChangeHandler"
