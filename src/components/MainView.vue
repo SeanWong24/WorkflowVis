@@ -48,7 +48,7 @@ import { cloudUpload } from "ionicons/icons";
 import VisView from "./VisView";
 
 import DefaultVisView from "./DefaultVisView";
-import TimePerformanceVisView from "./TimePerformanceVisView";
+import TimeSeriesVisView from "./TimeSeriesVisView";
 import ErrorProportionDonutVisView from "./ErrorProportionDonutVisView";
 import DataHistoryVisView from "./DataHistoryVisView";
 
@@ -70,7 +70,7 @@ export default {
     datasetFile: File,
     visComponentList: [
       DefaultVisView,
-      TimePerformanceVisView,
+      TimeSeriesVisView,
       ErrorProportionDonutVisView,
       DataHistoryVisView
     ],

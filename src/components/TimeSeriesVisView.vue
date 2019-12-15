@@ -8,8 +8,8 @@ import * as d3 from "d3";
 import DefaultVisView from "./DefaultVisView";
 
 export default {
-  name: "TimePerformanceVisView",
-  displayedName: "Time Performance",
+  name: "TimeSeriesVisView",
+  displayedName: "Time Series",
   extends: DefaultVisView,
   data: () => ({
     selectedModules: []
@@ -126,8 +126,27 @@ export default {
               ? xScale(Date.parse(modules[index + 1].time))
               : 425) - xScale(Date.parse(module.time))
         )
-        .attr("height", 25)
+        .attr("height", 20)
         .attr("fill", module => colorScale(module.NAME));
+
+      const moduleErrorBoxes = svgElement
+        .append("g")
+        .selectAll("rect")
+        .data(modules)
+        .enter()
+        .append("rect");
+      moduleErrorBoxes
+        .attr("x", module => xScale(Date.parse(module.time)))
+        .attr("y", 470)
+        .attr(
+          "width",
+          (module, index) =>
+            (index < modules.length - 1
+              ? xScale(Date.parse(modules[index + 1].time))
+              : 425) - xScale(Date.parse(module.time))
+        )
+        .attr("height", 10)
+        .attr("fill", module => (module.error === "null" ? "green" : "red"));
 
       const yAxisCpu = svgElement
         .append("g")
@@ -154,7 +173,7 @@ export default {
               ? xScale(Date.parse(modules[index + 1].time))
               : 425) - xScale(Date.parse(module.time))
         )
-        .attr("height", 425)
+        .attr("height", 430)
         .attr("fill", module => colorScale(module.NAME))
         .attr("opacity", 0)
         .style("cursor", "pointer")
@@ -189,7 +208,9 @@ export default {
             "\nCPU Load: " +
             module.cpu_run +
             "%\nMemory Load: " +
-            module.memory_run
+            module.memory_run +
+            "\nError: " +
+            module.error
         );
     }
   }
