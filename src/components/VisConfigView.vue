@@ -1,7 +1,7 @@
 <template>
   <ion-card-header>
     <ion-label class="vis-title-label">Vis {{visIndex}}</ion-label>
-    <div class="setting-item-container">
+    <div class="header-item">
       <ion-select
         interface="popover"
         placeholder="Vis Type"
@@ -15,7 +15,7 @@
         >{{component.displayedName}}</ion-select-option>
       </ion-select>
     </div>
-    <div class="setting-item-container">
+    <div class="header-item">
       <ion-select
         interface="popover"
         placeholder="Data From"
@@ -29,10 +29,25 @@
         >From {{i > 0 ? "Vis" + i : "Default"}}</ion-select-option>
       </ion-select>
     </div>
+    <ion-buttons class="header-item">
+      <ion-button @click="settingButtonClickHandler">
+        <ion-icon slot="icon-only" name="settings"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-card-header>
 </template>
 
 <script>
+import { addIcons } from "ionicons";
+import { settings } from "ionicons/icons";
+
+import VisSettingsView from "./VisSettingsView";
+
+addIcons({
+  "md-settings": settings.md,
+  "ios-settings": settings.ios
+});
+
 export default {
   name: "VisConfigView",
   props: ["visIndex", "visComponentList", "visComponent", "visDataSource"],
@@ -42,6 +57,14 @@ export default {
     },
     visDataSourceChangeHandler(sourceIndex) {
       this.$emit("visDataSourceChange", { index: this.visIndex, sourceIndex });
+    },
+    async settingButtonClickHandler(evt) {
+      const popover = await this.$ionic.popoverController.create({
+        component: VisSettingsView,
+        event: evt,
+        translucent: true
+      });
+      return await popover.present();
     }
   }
 };
@@ -60,7 +83,16 @@ ion-card-header {
   color: black;
 }
 
-.setting-item-container {
+.header-item {
   display: inline-block;
+}
+
+ion-buttons {
+  float: right;
+}
+
+.header-item ion-button {
+  max-width: 40px;
+  max-height: 40px;
 }
 </style>
