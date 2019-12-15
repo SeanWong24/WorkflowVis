@@ -50,6 +50,7 @@ import VisView from "./VisView";
 import DefaultVisView from "./DefaultVisView";
 import TimePerformanceVisView from "./TimePerformanceVisView";
 import ErrorProportionDonutVisView from "./ErrorProportionDonutVisView";
+import DataHistoryVisView from "./DataHistoryVisView";
 
 addIcons({
   "md-cloud-upload": cloudUpload.md,
@@ -70,7 +71,8 @@ export default {
     visComponentList: [
       DefaultVisView,
       TimePerformanceVisView,
-      ErrorProportionDonutVisView
+      ErrorProportionDonutVisView,
+      DataHistoryVisView
     ],
     visComponent1: DefaultVisView,
     visComponent2: DefaultVisView,
