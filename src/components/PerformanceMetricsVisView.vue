@@ -1,11 +1,5 @@
 <template>
-  <svg
-    width="100%"
-    height="100%"
-    viewBox="0 0 500 500"
-    preserveAspectRatio="xMidYMid meet"
-    ref="mainSvg"
-  />
+  <svg width="100%" height="100%" viewBox="0 0 500 500" preserveAspectRatio="none" ref="mainSvg" />
 </template>
 
 <script>
@@ -81,7 +75,7 @@ export default {
       const moduleNameScale = d3
         .scaleBand()
         .domain(moduleNameList)
-        .range([50, 450])
+        .range([50, 425])
         .padding(0.1);
       const cpuScale = d3
         .scaleLinear()
@@ -229,7 +223,7 @@ export default {
       yAxisCpu.call(d3.axisLeft(cpuScale).tickFormat(d => d + "%"));
       const yAxisMemory = svgElement
         .append("g")
-        .attr("transform", "translate(450, 0)");
+        .attr("transform", "translate(425, 0)");
       yAxisMemory.call(d3.axisRight(memoryScale));
     }
   }
