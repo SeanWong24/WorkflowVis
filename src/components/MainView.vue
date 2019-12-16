@@ -50,6 +50,7 @@ import VisView from "./VisView";
 import DefaultVisView from "./DefaultVisView";
 import TimeSeriesVisView from "./TimeSeriesVisView";
 import ErrorProportionDonutVisView from "./ErrorProportionDonutVisView";
+import PerformanceMetricsVisView from "./PerformanceMetricsVisView";
 import DataHistoryVisView from "./DataHistoryVisView";
 
 addIcons({
@@ -72,6 +73,7 @@ export default {
       DefaultVisView,
       TimeSeriesVisView,
       ErrorProportionDonutVisView,
+      PerformanceMetricsVisView,
       DataHistoryVisView
     ],
     visComponent1: DefaultVisView,
