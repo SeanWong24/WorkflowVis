@@ -40,7 +40,7 @@ export default {
           ])
           .filter(d => d.isSelected);
         if (selectedPartitionList.length > 0) {
-          const nodes = this.dataset.nodes.filter(
+          const nodesFilteredByModules = this.dataset.nodes.filter(
             node =>
               node.label !== "module" ||
               selectedPartitionList.find(
@@ -49,6 +49,21 @@ export default {
                   (d.status === "success"
                     ? node.error === "null"
                     : node.error !== "null")
+              )
+          );
+          const nodes = nodesFilteredByModules.filter(
+            node =>
+              node.label === "module" ||
+              this.dataset.edges.find(
+                edge =>
+                  (edge.source === node.id &&
+                    nodesFilteredByModules.find(
+                      n => n.label === "module" && n.id === edge.target
+                    )) ||
+                  (edge.target === node.id &&
+                    nodesFilteredByModules.find(
+                      n => n.label === "module" && n.id === edge.source
+                    ))
               )
           );
           const edges = this.dataset.edges.filter(edge =>

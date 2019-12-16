@@ -21,10 +21,28 @@ export default {
           ? {
               nodes: this.dataset.nodes.filter(
                 node =>
-                  node.label !== "module" ||
-                  this.selectedModuleNames.find(
-                    moduleName => node.NAME === moduleName
-                  )
+                  (node.label === "module" &&
+                    this.selectedModuleNames.find(
+                      moduleName => node.NAME === moduleName
+                    )) ||
+                  (node.label !== "module" &&
+                    this.dataset.edges.find(
+                      edge =>
+                        (edge.source === node.id &&
+                          this.selectedModuleNames.find(
+                            moduleName =>
+                              moduleName ===
+                              this.dataset.nodes.find(n => n.id === edge.target)
+                                .NAME
+                          )) ||
+                        (edge.target === node.id &&
+                          this.selectedModuleNames.find(
+                            moduleName =>
+                              moduleName ===
+                              this.dataset.nodes.find(n => n.id === edge.source)
+                                .NAME
+                          ))
+                    ))
               ),
               edges: this.dataset.edges.filter(edge =>
                 this.selectedModuleNames.find(moduleName =>
