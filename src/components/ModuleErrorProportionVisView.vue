@@ -14,8 +14,8 @@ import * as d3 from "d3";
 import DefaultVisView from "./DefaultVisView";
 
 export default {
-  name: "ErrorProportionDonutVisView",
-  displayedName: "Error Proportion Donut",
+  name: "ModuleErrorProportionVisView",
+  displayedName: "Module Error Proportion",
   extends: DefaultVisView,
   data: () => ({
     selectedPartitionMap: new Map()

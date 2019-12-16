@@ -31,8 +31,8 @@ import DefaultVisView from "./DefaultVisView";
 
 export default {
   //TODO implement data filters
-  name: "DataHistoryVisView",
-  displayedName: "Data Histroy",
+  name: "DataHistoryTableVisView",
+  displayedName: "Data Histroy Table",
   extends: DefaultVisView,
   methods: {
     obtainSourceModuleOfObject(obj) {

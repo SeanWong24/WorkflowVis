@@ -48,10 +48,10 @@ import { cloudUpload } from "ionicons/icons";
 import VisView from "./VisView";
 
 import DefaultVisView from "./DefaultVisView";
-import TimeSeriesVisView from "./TimeSeriesVisView";
-import ErrorProportionDonutVisView from "./ErrorProportionDonutVisView";
-import PerformanceMetricsVisView from "./PerformanceMetricsVisView";
-import DataHistoryVisView from "./DataHistoryVisView";
+import ModuleTimeSeriesVisView from "./ModuleTimeSeriesVisView";
+import ModuleMetricsVisView from "./ModuleMetricsVisView";
+import ModuleErrorProportionVisView from "./ModuleErrorProportionVisView";
+import DataHistoryTableVisView from "./DataHistoryTableVisView";
 
 addIcons({
   "md-cloud-upload": cloudUpload.md,
@@ -71,11 +71,25 @@ export default {
     datasetFile: File,
     visComponentList: [
       DefaultVisView,
-      TimeSeriesVisView,
-      ErrorProportionDonutVisView,
-      PerformanceMetricsVisView,
-      DataHistoryVisView
-    ],
+      ModuleTimeSeriesVisView,
+      ModuleMetricsVisView,
+      ModuleErrorProportionVisView,
+      DataHistoryTableVisView
+    ].sort((a, b) => {
+      if (a.displayedName === "Default") {
+        return -1;
+      }
+      if (b.displayedName === "Default") {
+        return 1;
+      }
+      if (a.displayedName > b.displayedName) {
+        return 1;
+      } else if (a.displayedName < b.displayedName) {
+        return -1;
+      } else {
+        return 0;
+      }
+    }),
     visComponent1: DefaultVisView,
     visComponent2: DefaultVisView,
     visComponent3: DefaultVisView,

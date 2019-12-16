@@ -8,8 +8,8 @@ import * as d3 from "d3";
 import DefaultVisView from "./DefaultVisView";
 
 export default {
-  name: "TimeSeriesVisView",
-  displayedName: "Time Series",
+  name: "ModuleTimeSeriesVisView",
+  displayedName: "Module Time Series",
   extends: DefaultVisView,
   data: () => ({
     selectedModules: []

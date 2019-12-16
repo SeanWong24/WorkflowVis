@@ -8,8 +8,8 @@ import * as d3 from "d3";
 import DefaultVisView from "./DefaultVisView";
 
 export default {
-  name: "PerformanceMetricsVisView",
-  displayedName: "Performance Metrics",
+  name: "ModuleMetricsVisView",
+  displayedName: "Module Metrics",
   extends: DefaultVisView,
   data: () => ({
     selectedModuleNames: []
