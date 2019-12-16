@@ -11,19 +11,8 @@ export default {
   displayedName: "Default",
   props: ["dataset", "completeDataset", "visIndex", "moduleColorScale"],
   data: () => ({
-    //TODO remove mock setting items
-    settingDefinitions: [
-      {
-        label: "prop 1",
-        type: "selection",
-        options: ["a", "b", "c"]
-      },
-      {
-        label: "prop 2",
-        type: "checkbox"
-      }
-    ],
-    settingDataMap: new Map([["prop 1", "b"], ["prop 2", true]])
+    settingDefinitions: [],
+    settingDataMap: new Map()
   }),
   watch: {
     dataset: function(value) {

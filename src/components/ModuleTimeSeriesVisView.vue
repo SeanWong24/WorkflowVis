@@ -12,7 +12,26 @@ export default {
   displayedName: "Module Time Series",
   extends: DefaultVisView,
   data: () => ({
-    selectedModules: []
+    selectedModules: [],
+    settingDefinitions: [
+      {
+        label: "Show CPU",
+        type: "checkbox"
+      },
+      {
+        label: "Show Memory",
+        type: "checkbox"
+      },
+      {
+        label: "Show Errors",
+        type: "checkbox"
+      }
+    ],
+    settingDataMap: new Map([
+      ["Show CPU", true],
+      ["Show Memory", true],
+      ["Show Errors", true]
+    ])
   }),
   computed: {
     filteredData: {
@@ -86,33 +105,37 @@ export default {
         ])
         .range([450, 50]);
 
-      const cpuLine = d3
-        .line()
-        .x(module => xScale(Date.parse(module.time)))
-        .y(module => yScaleCpu(module.cpu_run))
-        .curve(d3.curveStepAfter);
-      const memoryLine = d3
-        .line()
-        .x(module => xScale(Date.parse(module.time)))
-        .y(module => yScaleMemory(module.memory_run))
-        .curve(d3.curveStepAfter);
+      if (this.settingDataMap.get("Show CPU")) {
+        const cpuLine = d3
+          .line()
+          .x(module => xScale(Date.parse(module.time)))
+          .y(module => yScaleCpu(module.cpu_run))
+          .curve(d3.curveStepAfter);
+        const cpuPath = svgElement.append("g").append("path");
+        cpuPath
+          .datum(modules)
+          .attr("d", cpuLine)
+          .attr("stroke", "red")
+          .attr("stroke-width", 1)
+          .attr("fill", "none")
+          .attr("opacity", 0.7);
+      }
 
-      const cpuPath = svgElement.append("g").append("path");
-      cpuPath
-        .datum(modules)
-        .attr("d", cpuLine)
-        .attr("stroke", "red")
-        .attr("stroke-width", 1)
-        .attr("fill", "none")
-        .attr("opacity", 0.7);
-      const memoryPath = svgElement.append("g").append("path");
-      memoryPath
-        .datum(modules)
-        .attr("d", memoryLine)
-        .attr("stroke", "blue")
-        .attr("stroke-width", 1)
-        .attr("fill", "none")
-        .attr("opacity", 0.7);
+      if (this.settingDataMap.get("Show Memory")) {
+        const memoryLine = d3
+          .line()
+          .x(module => xScale(Date.parse(module.time)))
+          .y(module => yScaleMemory(module.memory_run))
+          .curve(d3.curveStepAfter);
+        const memoryPath = svgElement.append("g").append("path");
+        memoryPath
+          .datum(modules)
+          .attr("d", memoryLine)
+          .attr("stroke", "blue")
+          .attr("stroke-width", 1)
+          .attr("fill", "none")
+          .attr("opacity", 0.7);
+      }
 
       const moduleBoxes = svgElement
         .append("g")
@@ -133,24 +156,26 @@ export default {
         .attr("height", 20)
         .attr("fill", module => this.moduleColorScale(module.NAME));
 
-      const moduleErrorBoxes = svgElement
-        .append("g")
-        .selectAll("rect")
-        .data(modules)
-        .enter()
-        .append("rect");
-      moduleErrorBoxes
-        .attr("x", module => xScale(Date.parse(module.time)))
-        .attr("y", 470)
-        .attr(
-          "width",
-          (module, index) =>
-            (index < modules.length - 1
-              ? xScale(Date.parse(modules[index + 1].time))
-              : 425) - xScale(Date.parse(module.time))
-        )
-        .attr("height", 10)
-        .attr("fill", module => (module.error === "null" ? "green" : "red"));
+      if (this.settingDataMap.get("Show Errors")) {
+        const moduleErrorBoxes = svgElement
+          .append("g")
+          .selectAll("rect")
+          .data(modules)
+          .enter()
+          .append("rect");
+        moduleErrorBoxes
+          .attr("x", module => xScale(Date.parse(module.time)))
+          .attr("y", 470)
+          .attr(
+            "width",
+            (module, index) =>
+              (index < modules.length - 1
+                ? xScale(Date.parse(modules[index + 1].time))
+                : 425) - xScale(Date.parse(module.time))
+          )
+          .attr("height", 10)
+          .attr("fill", module => (module.error === "null" ? "green" : "red"));
+      }
 
       const yAxisCpu = svgElement
         .append("g")
@@ -216,6 +241,9 @@ export default {
             "\nError: " +
             module.error
         );
+    },
+    applySettings() {
+      this.generateVis(this.dataset);
     }
   }
 };
