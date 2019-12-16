@@ -50,7 +50,14 @@ addIcons({
 
 export default {
   name: "VisConfigView",
-  props: ["visIndex", "visComponentList", "visComponent", "visDataSource"],
+  props: [
+    "visIndex",
+    "visComponentList",
+    "visComponent",
+    "visDataSource",
+    "visSettingDefinitions",
+    "visSettingDataMap"
+  ],
   methods: {
     visComponentChangeHandler(component) {
       this.$emit("visComponentChange", { index: this.visIndex, component });
@@ -61,10 +68,20 @@ export default {
     async settingButtonClickHandler(evt) {
       const popover = await this.$ionic.popoverController.create({
         component: VisSettingsView,
+        componentProps: {
+          propsData: {
+            settingDefinitions: this.visSettingDefinitions,
+            settingDataMap: this.visSettingDataMap,
+            settingChangeHandler: this.settingChangeHandler
+          }
+        },
         event: evt,
         translucent: true
       });
       return await popover.present();
+    },
+    settingChangeHandler(label, value) {
+      this.$emit("visSettingChange", { index: this.visIndex, label, value });
     }
   }
 };

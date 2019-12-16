@@ -8,17 +8,23 @@
             :visComponentList="visComponentList"
             :visComponent="visComponent1"
             :visDataSource="dataSourceVis1"
+            :visSettingDefinitions="visSettingDefinitionsMap.get(1)"
+            :visSettingDataMap="visSettingDataMapMap.get(1)"
             @visComponentChange="visComponentChangeHandler"
             @visDataSourceChange="visDataSourceChangeHandler"
+            @visSettingChange="visSettingChangeHandler"
           />
           <div class="vis-container">
             <component
+              ref="vis1"
               :is="visComponent1"
               :visIndex="1"
               :dataset="dataForVis1"
               :completeDataset="dataset"
               :moduleColorScale="moduleColorScale"
               @filteredDataChange="filteredDataChangeHandler"
+              @settingDefinitionsChange="visSettingDefinitionsChange"
+              @settingDataMapChange="visSettingDataMapChange"
             />
           </div>
         </ion-card>
@@ -30,17 +36,23 @@
             :visComponentList="visComponentList"
             :visComponent="visComponent2"
             :visDataSource="dataSourceVis2"
+            :visSettingDefinitions="visSettingDefinitionsMap.get(2)"
+            :visSettingDataMap="visSettingDataMapMap.get(2)"
             @visComponentChange="visComponentChangeHandler"
             @visDataSourceChange="visDataSourceChangeHandler"
+            @visSettingChange="visSettingChangeHandler"
           />
           <div class="vis-container">
             <component
+              ref="vis2"
               :is="visComponent2"
               :visIndex="2"
               :dataset="dataForVis2"
               :completeDataset="dataset"
               :moduleColorScale="moduleColorScale"
               @filteredDataChange="filteredDataChangeHandler"
+              @settingDefinitionsChange="visSettingDefinitionsChange"
+              @settingDataMapChange="visSettingDataMapChange"
             />
           </div>
         </ion-card>
@@ -54,17 +66,23 @@
             :visComponentList="visComponentList"
             :visComponent="visComponent3"
             :visDataSource="dataSourceVis3"
+            :visSettingDefinitions="visSettingDefinitionsMap.get(3)"
+            :visSettingDataMap="visSettingDataMapMap.get(3)"
             @visComponentChange="visComponentChangeHandler"
             @visDataSourceChange="visDataSourceChangeHandler"
+            @visSettingChange="visSettingChangeHandler"
           />
           <div class="vis-container">
             <component
+              ref="vis3"
               :is="visComponent3"
               :visIndex="3"
               :dataset="dataForVis3"
               :completeDataset="dataset"
               :moduleColorScale="moduleColorScale"
               @filteredDataChange="filteredDataChangeHandler"
+              @settingDefinitionsChange="visSettingDefinitionsChange"
+              @settingDataMapChange="visSettingDataMapChange"
             />
           </div>
         </ion-card>
@@ -76,17 +94,23 @@
             :visComponentList="visComponentList"
             :visComponent="visComponent4"
             :visDataSource="dataSourceVis4"
+            :visSettingDefinitions="visSettingDefinitionsMap.get(4)"
+            :visSettingDataMap="visSettingDataMapMap.get(4)"
             @visComponentChange="visComponentChangeHandler"
             @visDataSourceChange="visDataSourceChangeHandler"
+            @visSettingChange="visSettingChangeHandler"
           />
           <div class="vis-container">
             <component
+              ref="vis4"
               :is="visComponent4"
               :visIndex="4"
               :dataset="dataForVis4"
               :completeDataset="dataset"
               :moduleColorScale="moduleColorScale"
               @filteredDataChange="filteredDataChangeHandler"
+              @settingDefinitionsChange="visSettingDefinitionsChange"
+              @settingDataMapChange="visSettingDataMapChange"
             />
           </div>
         </ion-card>
@@ -122,7 +146,14 @@ export default {
     "dataForVis4"
   ],
   data: () => ({
-    moduleColorScale: () => "black"
+    moduleColorScale: () => "black",
+    visSettingDefinitionsMap: new Map([[1, []], [2, []], [3, []], [4, []]]),
+    visSettingDataMapMap: new Map([
+      [1, new Map()],
+      [2, new Map()],
+      [3, new Map()],
+      [4, new Map()]
+    ])
   }),
   watch: {
     dataset: function(value) {
@@ -147,6 +178,17 @@ export default {
     },
     visDataSourceChangeHandler(data) {
       this.$emit("visDataSourceChange", data);
+    },
+    visSettingChangeHandler({ index, label, value }) {
+      this.$refs["vis" + index].settingChangeHandler(label, value);
+    },
+    visSettingDefinitionsChange({ index, definitions }) {
+      this.visSettingDefinitionsMap.set(index, definitions);
+      this.visSettingDefinitionsMap = new Map(this.visSettingDefinitionsMap);
+    },
+    visSettingDataMapChange({ index, map }) {
+      this.visSettingDataMapMap.set(index, map);
+      this.visSettingDataMapMap = new Map(this.visSettingDataMapMap);
     }
   }
 };

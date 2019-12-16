@@ -10,6 +10,21 @@ export default {
   name: "DefaultVisView",
   displayedName: "Default",
   props: ["dataset", "completeDataset", "visIndex", "moduleColorScale"],
+  data: () => ({
+    //TODO remove mock setting items
+    settingDefinitions: [
+      {
+        label: "prop 1",
+        type: "selection",
+        options: ["a", "b", "c"]
+      },
+      {
+        label: "prop 2",
+        type: "checkbox"
+      }
+    ],
+    settingDataMap: new Map([["prop 1", "b"], ["prop 2", true]])
+  }),
   watch: {
     dataset: function(value) {
       this.refresh(value);
@@ -26,6 +41,15 @@ export default {
     }
   },
   mounted: function() {
+    this.$emit("settingDefinitionsChange", {
+      index: this.visIndex,
+      definitions: this.settingDefinitions
+    });
+    this.$emit("settingDataMapChange", {
+      index: this.visIndex,
+      map: this.settingDataMap
+    });
+
     if (this.dataset) {
       this.refresh(this.dataset);
     }
@@ -43,7 +67,16 @@ export default {
       });
     },
     resetFilter() {},
-    generateVis() {}
+    generateVis() {},
+    applySettings() {},
+    settingChangeHandler(label, value) {
+      this.settingDataMap.set(label, value);
+      this.$emit("settingDataMapChange", {
+        index: this.visIndex,
+        map: this.settingDataMap
+      });
+      this.applySettings();
+    }
   }
 };
 </script>
