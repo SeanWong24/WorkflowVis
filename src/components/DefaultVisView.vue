@@ -8,7 +8,7 @@
 <script>
 export default {
   name: "DefaultVisView",
-  displayedName: "Default",
+  displayedName: "None",
   props: ["dataset", "completeDataset", "visIndex", "moduleColorScale"],
   data: () => ({
     settingDefinitions: [],
