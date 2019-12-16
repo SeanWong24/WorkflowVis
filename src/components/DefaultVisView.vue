@@ -9,7 +9,7 @@
 export default {
   name: "DefaultVisView",
   displayedName: "Default",
-  props: ["dataset", "completeDataset", "visIndex"],
+  props: ["dataset", "completeDataset", "visIndex", "moduleColorScale"],
   watch: {
     dataset: function(value) {
       this.refresh(value);

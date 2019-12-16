@@ -100,16 +100,6 @@ export default {
         .attr("fill", "none")
         .attr("opacity", 0.7);
 
-      const colorScale = d3
-        .scaleOrdinal(d3.schemeAccent)
-        .domain(
-          modules
-            .filter(
-              (module, index) => modules.findIndex(m => module === m) === index
-            )
-            .map(module => module.NAME)
-        );
-
       const moduleBoxes = svgElement
         .append("g")
         .selectAll("rect")
@@ -127,7 +117,7 @@ export default {
               : 425) - xScale(Date.parse(module.time))
         )
         .attr("height", 20)
-        .attr("fill", module => colorScale(module.NAME));
+        .attr("fill", module => this.moduleColorScale(module.NAME));
 
       const moduleErrorBoxes = svgElement
         .append("g")
@@ -174,7 +164,7 @@ export default {
               : 425) - xScale(Date.parse(module.time))
         )
         .attr("height", 430)
-        .attr("fill", module => colorScale(module.NAME))
+        .attr("fill", module => this.moduleColorScale(module.NAME))
         .attr("opacity", 0)
         .style("cursor", "pointer")
         .on("mouseover", () => {

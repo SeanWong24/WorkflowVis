@@ -64,10 +64,6 @@ export default {
         )
         .map(module => module.NAME);
 
-      const colorScale = d3
-        .scaleOrdinal(d3.schemeAccent)
-        .domain(moduleNameList);
-
       const modulePerformanceMap = new Map();
       moduleNameList.forEach(moduleName => {
         const modulesWithSameName = modules.filter(
@@ -181,7 +177,7 @@ export default {
         .attr("width", moduleNameScale.bandwidth())
         .attr("y", 50)
         .attr("height", 400)
-        .attr("fill", d => colorScale(d[0]))
+        .attr("fill", d => this.moduleColorScale(d[0]))
         .attr("opacity", 0)
         .attr("cursor", "pointer")
         .on("mouseover", () => {

@@ -17,6 +17,7 @@
               :visIndex="1"
               :dataset="dataForVis1"
               :completeDataset="dataset"
+              :moduleColorScale="moduleColorScale"
               @filteredDataChange="filteredDataChangeHandler"
             />
           </div>
@@ -38,6 +39,7 @@
               :visIndex="2"
               :dataset="dataForVis2"
               :completeDataset="dataset"
+              :moduleColorScale="moduleColorScale"
               @filteredDataChange="filteredDataChangeHandler"
             />
           </div>
@@ -61,6 +63,7 @@
               :visIndex="3"
               :dataset="dataForVis3"
               :completeDataset="dataset"
+              :moduleColorScale="moduleColorScale"
               @filteredDataChange="filteredDataChangeHandler"
             />
           </div>
@@ -82,6 +85,7 @@
               :visIndex="4"
               :dataset="dataForVis4"
               :completeDataset="dataset"
+              :moduleColorScale="moduleColorScale"
               @filteredDataChange="filteredDataChangeHandler"
             />
           </div>
@@ -92,6 +96,8 @@
 </template>
 
 <script>
+import * as d3 from "d3";
+
 import VisConfigView from "./VisConfigView";
 
 export default {
@@ -115,6 +121,23 @@ export default {
     "dataForVis3",
     "dataForVis4"
   ],
+  data: () => ({
+    moduleColorScale: () => "black"
+  }),
+  watch: {
+    dataset: function(value) {
+      const modules = value.nodes.filter(node => node.label === "module");
+      this.moduleColorScale = d3
+        .scaleOrdinal(d3.schemeAccent)
+        .domain(
+          modules
+            .filter(
+              (module, index) => modules.findIndex(m => module === m) === index
+            )
+            .map(module => module.NAME)
+        );
+    }
+  },
   methods: {
     filteredDataChangeHandler(data) {
       this.$emit("visFilteredDataChange", data);

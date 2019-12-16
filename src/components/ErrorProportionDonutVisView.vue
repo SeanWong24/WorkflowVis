@@ -106,15 +106,6 @@ export default {
         ])
       );
 
-      const colorScaleInner = d3
-        .scaleOrdinal(d3.schemeAccent)
-        .domain(
-          modules
-            .filter(
-              (module, index) => modules.findIndex(m => module === m) === index
-            )
-            .map(module => module.NAME)
-        );
       const colorScaleOutter = d3
         .scaleOrdinal()
         .domain([true, false])
@@ -133,7 +124,7 @@ export default {
             .innerRadius(50)
             .outerRadius(100)
         )
-        .attr("fill", d => colorScaleInner(d.data[0]))
+        .attr("fill", d => this.moduleColorScale(d.data[0]))
         .attr("stroke", "black")
         .attr("stroke-width", "2px")
         .attr("opacity", 0.7)
