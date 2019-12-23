@@ -52,6 +52,7 @@ import ModuleTimeSeriesVisView from "./ModuleTimeSeriesVisView";
 import ModuleMetricsVisView from "./ModuleMetricsVisView";
 import ModuleErrorProportionVisView from "./ModuleErrorProportionVisView";
 import DataHistoryTableVisView from "./DataHistoryTableVisView";
+import OverviewGraphVisView from "./OverviewGraphVisView";
 
 addIcons({
   "md-cloud-upload": cloudUpload.md,
@@ -74,7 +75,8 @@ export default {
       ModuleTimeSeriesVisView,
       ModuleMetricsVisView,
       ModuleErrorProportionVisView,
-      DataHistoryTableVisView
+      DataHistoryTableVisView,
+      OverviewGraphVisView
     ].sort((a, b) => {
       if (a.displayedName === "Default") {
         return -1;
