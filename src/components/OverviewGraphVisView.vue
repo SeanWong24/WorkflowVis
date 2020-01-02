@@ -41,8 +41,8 @@ export default {
               .attr('refX',13)
               .attr('refY',0)
               .attr('orient','auto')
-              .attr('markerWidth', 8)
-              .attr('markerHeight', 8)
+              .attr('markerWidth', 7)
+              .attr('markerHeight', 7)
               .attr('overflow-x', 'visible')
               .append('svg:path')
               .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
@@ -96,7 +96,8 @@ export default {
                   return d3.symbolStar;
               }
             })
-            .size(50)
+
+            .size(70)
         )
         .call(
           d3

@@ -104,8 +104,10 @@ export default {
           d3.max(modules.map(module => +module.memory_run))
         ])
         .range([450, 50]);
-
+      debugger;
+      console.log(this.settingDataMap.get("Show CPU"));
       if (this.settingDataMap.get("Show CPU")) {
+
         const cpuLine = d3
           .line()
           .x(module => xScale(Date.parse(module.time)))
