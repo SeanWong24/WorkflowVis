@@ -12,7 +12,26 @@ export default {
   displayedName: "Module Metrics",
   extends: DefaultVisView,
   data: () => ({
-    selectedModuleNames: []
+    selectedModules: [],
+    selectedModuleNames: [],
+    settingDefinitions: [
+      {
+        label: "Show CPU",
+        type: "checkbox"
+      },
+      {
+        label: "Show Memory",
+        type: "checkbox"
+      },
+      {
+        label: "Show Errors",
+        type: "checkbox"
+      }],
+    settingDataMap: new Map([
+      ["Show CPU", true],
+      ["Show Memory", true],
+      ["Show Errors", true]
+    ])
   }),
   computed: {
     filteredData: {
@@ -62,6 +81,7 @@ export default {
   methods: {
     resetFilter() {
       this.selectedModuleNames = [];
+      this.selectedModules = [];
     },
     generateVis(value) {
       const svgElement = d3.select(this.$refs.mainSvg);
@@ -95,6 +115,7 @@ export default {
         .domain(moduleNameList)
         .range([50, 425])
         .padding(0.1);
+
       const cpuScale = d3
         .scaleLinear()
         .domain([
@@ -140,44 +161,49 @@ export default {
           ) * 1.1
         ])
         .range([450, 50]);
-
-      const gElementCpu = svgElement.append("g");
-      gElementCpu
-        .selectAll("rect")
-        .data(Array.from(modulePerformanceMap.entries()))
-        .enter()
-        .append("rect")
-        .attr("x", d => moduleNameScale(d[0]))
-        .attr("width", moduleNameScale.bandwidth() / 3)
-        .attr("y", d => cpuScale(d[1].cpu))
-        .attr("height", d => 450 - cpuScale(d[1].cpu))
-        .attr("fill", "red");
-      const gElementMemory = svgElement.append("g");
-      gElementMemory
-        .selectAll("rect")
-        .data(Array.from(modulePerformanceMap.entries()))
-        .enter()
-        .append("rect")
-        .attr("x", d => moduleNameScale(d[0]) + moduleNameScale.bandwidth() / 3)
-        .attr("width", moduleNameScale.bandwidth() / 3)
-        .attr("y", d => memoryScale(d[1].memory))
-        .attr("height", d => 450 - memoryScale(d[1].memory))
-        .attr("fill", "blue");
-      const gElementErrors = svgElement.append("g");
-      gElementErrors
-        .selectAll("rect")
-        .data(Array.from(modulePerformanceMap.entries()))
-        .enter()
-        .append("rect")
-        .attr(
-          "x",
-          d => moduleNameScale(d[0]) + (moduleNameScale.bandwidth() / 3) * 2
-        )
-        .attr("width", moduleNameScale.bandwidth() / 3)
-        .attr("y", d => errorScale(d[1].errors))
-        .attr("height", d => 450 - errorScale(d[1].errors))
-        .attr("fill", "green");
-
+      if (this.settingDataMap.get("Show CPU")){
+        console.log(this.settingDataMap.get("Show CPU"));
+        const gElementCpu = svgElement.append("g");
+        gElementCpu
+                .selectAll("rect")
+                .data(Array.from(modulePerformanceMap.entries()))
+                .enter()
+                .append("rect")
+                .attr("x", d => moduleNameScale(d[0]))
+                .attr("width", moduleNameScale.bandwidth() / 3)
+                .attr("y", d => cpuScale(d[1].cpu))
+                .attr("height", d => 450 - cpuScale(d[1].cpu))
+                .attr("fill", "red");
+      }
+      if (this.settingDataMap.get("Show Memory")){
+        const gElementMemory = svgElement.append("g");
+        gElementMemory
+                .selectAll("rect")
+                .data(Array.from(modulePerformanceMap.entries()))
+                .enter()
+                .append("rect")
+                .attr("x", d => moduleNameScale(d[0]) + moduleNameScale.bandwidth() / 3)
+                .attr("width", moduleNameScale.bandwidth() / 3)
+                .attr("y", d => memoryScale(d[1].memory))
+                .attr("height", d => 450 - memoryScale(d[1].memory))
+                .attr("fill", "blue");
+      }
+      if (this.settingDataMap.get("Show Errors")){
+        const gElementErrors = svgElement.append("g");
+        gElementErrors
+                .selectAll("rect")
+                .data(Array.from(modulePerformanceMap.entries()))
+                .enter()
+                .append("rect")
+                .attr(
+                        "x",
+                        d => moduleNameScale(d[0]) + (moduleNameScale.bandwidth() / 3) * 2
+                )
+                .attr("width", moduleNameScale.bandwidth() / 3)
+                .attr("y", d => errorScale(d[1].errors))
+                .attr("height", d => 450 - errorScale(d[1].errors))
+                .attr("fill", "green");
+      }
       const guideBoxes = svgElement
         .append("g")
         .selectAll("rect")
@@ -243,6 +269,9 @@ export default {
         .append("g")
         .attr("transform", "translate(425, 0)");
       yAxisMemory.call(d3.axisRight(memoryScale));
+    },
+    applySettings() {
+      this.generateVis(this.dataset);
     }
   }
 };

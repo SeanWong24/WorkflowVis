@@ -18,7 +18,21 @@ export default {
   displayedName: "Module Error Proportion",
   extends: DefaultVisView,
   data: () => ({
-    selectedPartitionMap: new Map()
+    selectedPartitionMap: new Map(),
+    settingDefinitions: [
+      {
+        label: "Show Module Proportion",
+        type: "checkbox"
+      },
+      {
+        label: "Show Success and Error Proportion",
+        type: "checkbox"
+      }
+    ],
+    settingDataMap: new Map([
+      ["Show Module Proportion", true],
+      ["Show Success and Error Proportion", true],
+    ])
   }),
   computed: {
     filteredData: {
@@ -109,8 +123,7 @@ export default {
         data[module.NAME].push(module);
       }
 
-      const pie = d3
-        .pie()
+      const pie = d3.pie()
         .value(d => d[1].length)
         .sort(null);
       const pieInner = pie(Object.entries(data));
@@ -125,77 +138,102 @@ export default {
         .scaleOrdinal()
         .domain([true, false])
         .range(["green", "red"]);
+      if (this.settingDataMap.get("Show Module Proportion")){
+        const gInnerPie = gElement.append("g");
+        const label = d3
+                .arc()
+                .innerRadius(50)
+                .outerRadius(100);
+        const innerPiePaths = gInnerPie
+                .selectAll("path")
+                .data(pieInner)
+                .enter()
+                .append("path")
+                .attr(
+                        "d",
+                        label
+                )
+                .attr("fill", d => this.moduleColorScale(d.data[0]))
+                .attr("stroke", "black")
+                .attr("stroke-width", "2px")
+                .attr("opacity", 0.7)
+                .style("cursor", "pointer")
+                .on("click", d => {
+                  const tempMap = this.selectedPartitionMap.get(d.data[0]);
+                  const previousValue = tempMap.get("success") && tempMap.get("error");
+                  tempMap.set("success", !previousValue);
+                  tempMap.set("error", !previousValue);
+                  this.updateSelection();
+                });
+        innerPiePaths.append("text")
+                .attr("transform", function(d) {
+                  return "translate(" + label.centroid(d) + ")";
+                })
+                .attr("text-anchor", "middle")
+                .attr("color","black")
+                .text(function(d) {
+                  // console.log(d.data[0]);
+                  return d.data[0];
+                });
 
-      const gInnerPie = gElement.append("g");
-      const innerPiePaths = gInnerPie
-        .selectAll("path")
-        .data(pieInner)
-        .enter()
-        .append("path")
-        .attr(
-          "d",
-          d3
-            .arc()
-            .innerRadius(50)
-            .outerRadius(100)
-        )
-        .attr("fill", d => this.moduleColorScale(d.data[0]))
-        .attr("stroke", "black")
-        .attr("stroke-width", "2px")
-        .attr("opacity", 0.7)
-        .style("cursor", "pointer")
-        .on("click", d => {
-          const tempMap = this.selectedPartitionMap.get(d.data[0]);
-          const previousValue = tempMap.get("success") && tempMap.get("error");
-          tempMap.set("success", !previousValue);
-          tempMap.set("error", !previousValue);
-          this.updateSelection();
-        });
-      innerPiePaths
-        .append("title")
-        .text(
-          d =>
-            d.data[0] +
-            "\n" +
-            ((d.value / modules.length) * 100).toFixed(2) +
-            "%"
-        );
+        // innerPiePaths
+        //   .append("title")
+        //   .text(
+        //     d =>
+        //       d.data[0] +
+        //       "\n" +
+        //       ((d.value / modules.length) * 100).toFixed(2) +
+        //       "%"
+        //   );
+      }
 
-      const gOutterPie = gElement.append("g");
-      const outterPiePaths = gOutterPie
-        .selectAll("path")
-        .data(pieOutter)
-        .enter()
-        .append("path")
-        .attr(
-          "d",
-          d3
-            .arc()
-            .innerRadius(100)
-            .outerRadius(150)
-        )
-        .attr("fill", d =>
-          colorScaleOutter(d.data[0].split("_")[1] === "success")
-        )
-        .attr("stroke", "black")
-        .attr("stroke-width", "2px")
-        .attr("opacity", 0.7)
-        .style("cursor", "pointer")
-        .on("click", d => {
-          const [moduleName, status] = d.data[0].split("_");
-          const tempMap = this.selectedPartitionMap.get(moduleName);
-          tempMap.set(status, !tempMap.get(status));
-          this.updateSelection();
-        });
-      outterPiePaths
-        .append("title")
-        .text(
-          d =>
-            d.data[0] +
-            "\n" +
-            ((d.value / modules.length) * 100).toFixed(2) +
-            "%"
-        );
+      if (this.settingDataMap.get("Show Success and Error Proportion")){
+        const labelOutter = d3.arc()
+                .innerRadius(100)
+                .outerRadius(150)
+        const gOutterPie = gElement.append("g");
+        const outterPiePaths = gOutterPie
+                .selectAll("path")
+                .data(pieOutter)
+                .enter()
+                .append("path")
+                .attr(
+                        "d",
+                        labelOutter
+                )
+                .attr("fill", d =>
+                        colorScaleOutter(d.data[0].split("_")[1] === "success")
+                )
+                .attr("stroke", "black")
+                .attr("stroke-width", "2px")
+                .attr("opacity", 0.7)
+                .style("cursor", "pointer")
+                .on("click", d => {
+                  const [moduleName, status] = d.data[0].split("_");
+                  const tempMap = this.selectedPartitionMap.get(moduleName);
+                  tempMap.set(status, !tempMap.get(status));
+                  this.updateSelection();
+                });
+        outterPiePaths.append("text")
+                .attr("transform", function(d) {
+                  return "translate(" + labelOutter.centroid(d) + ")";
+                })
+                .attr("text-anchor", "middle")
+                .attr("color","black")
+                .text(function(d) {
+                  console.log(d.data[0]);
+                  return d.data[0];
+                });
+        outterPiePaths
+                .append("title")
+                .text(
+                        d =>
+                                d.data[0] +
+                                "\n" +
+                                ((d.value / modules.length) * 100).toFixed(2) +
+                                "%"
+                );
+      }
     },
     updateSelection() {
       d3.select(this.$refs.mainSvg)
@@ -220,6 +258,9 @@ export default {
       this.selectedPartitionMap = temp;
 
       this.emitFilteredDataChangEvent();
+    },
+    applySettings() {
+      this.generateVis(this.dataset);
     }
   }
 };
