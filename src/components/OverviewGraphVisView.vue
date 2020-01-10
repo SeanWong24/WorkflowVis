@@ -34,6 +34,19 @@ export default {
         .force("y", d3.forceY(0))
         .force("x", d3.forceX(0));
 
+
+
+
+      const link = svgElement
+        .append("g")
+        .attr("class", "link")
+        .selectAll("line")
+        .data(data.edges)
+        .enter()
+        .append("line")
+        .attr("stroke", "gray")
+        .attr('marker-end', 'url(#arrowhead)');
+
       svgElement.append('defs').append('marker')
               .append("svg:marker")
               .attr('id','arrowhead')
@@ -49,19 +62,6 @@ export default {
               .attr('fill', '#999')
               .style('stroke', 'none');
 
-
-      const link = svgElement
-        .append("g")
-        .attr("class", "link")
-        .selectAll("line")
-        .data(data.edges)
-        .enter()
-        .append("line")
-        .attr("stroke", "gray")
-        .attr('marker-end', 'url(#arrowhead)');
-
-
-
       const node = svgElement
         .append("g")
         .attr("class", "nodes")
@@ -72,8 +72,8 @@ export default {
         .style("fill", function (d) {
                 if(d.label === "file"){
                   return '#1f77b4';
-                }
-              if(d.label === "module"){
+                }{
+              if(d.label === "module")
                 return 'ff0000';
               }
               if(d.label === "object"){
