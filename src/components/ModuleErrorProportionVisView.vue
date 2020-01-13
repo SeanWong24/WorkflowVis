@@ -166,9 +166,9 @@ export default {
                   this.updateSelection();
                 });
         innerPiePaths.append("text")
-                .attr("transform", function(d) {
-                  return "translate(" + label.centroid(d) + ")";
-                })
+                // .attr("transform", function(d) {
+                //   return "translate(" + label.centroid(d) + ")";
+                // })
                 .attr("text-anchor", "middle")
                 .attr("color","black")
                 .text(function(d) {
