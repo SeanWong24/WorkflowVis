@@ -26,11 +26,18 @@ export default {
       {
         label: "Show Errors",
         type: "checkbox"
-      }],
+      },
+      {
+        label: "Sorted By",
+        type: "selection",
+        options: ["CPU", "Memory", "Errors", "Default"]
+      }
+    ],
     settingDataMap: new Map([
       ["Show CPU", true],
       ["Show Memory", true],
-      ["Show Errors", true]
+      ["Show Errors", true],
+      ["Sorted By", "Default"]
     ])
   }),
   computed: {
@@ -96,7 +103,7 @@ export default {
         )
         .map(module => module.NAME);
 
-      const modulePerformanceMap = new Map();
+      let modulePerformanceMap = new Map();
       moduleNameList.forEach(moduleName => {
         const modulesWithSameName = modules.filter(
           module => module.NAME === moduleName
@@ -109,10 +116,24 @@ export default {
           )
         });
       });
+      modulePerformanceMap = new Map(
+        [...modulePerformanceMap.entries()].sort((a, b) => {
+          switch (this.settingDataMap.get("Sorted By")) {
+            case "CPU":
+              return (a[1].cpu - b[1].cpu) % 1;
+            case "Memory":
+              return (a[1].memory - b[1].memory) % 1;
+            case "Errors":
+              return (a[1].errors - b[1].errors) % 1;
+            default:
+              return 0;
+          }
+        })
+      );
 
       const moduleNameScale = d3
         .scaleBand()
-        .domain(moduleNameList)
+        .domain([...modulePerformanceMap.keys()])
         .range([50, 425])
         .padding(0.1);
 
@@ -161,48 +182,51 @@ export default {
           ) * 1.1
         ])
         .range([450, 50]);
-      if (this.settingDataMap.get("Show CPU")){
+      if (this.settingDataMap.get("Show CPU")) {
         console.log(this.settingDataMap.get("Show CPU"));
         const gElementCpu = svgElement.append("g");
         gElementCpu
-                .selectAll("rect")
-                .data(Array.from(modulePerformanceMap.entries()))
-                .enter()
-                .append("rect")
-                .attr("x", d => moduleNameScale(d[0]))
-                .attr("width", moduleNameScale.bandwidth() / 3)
-                .attr("y", d => cpuScale(d[1].cpu))
-                .attr("height", d => 450 - cpuScale(d[1].cpu))
-                .attr("fill", "red");
+          .selectAll("rect")
+          .data(Array.from(modulePerformanceMap.entries()))
+          .enter()
+          .append("rect")
+          .attr("x", d => moduleNameScale(d[0]))
+          .attr("width", moduleNameScale.bandwidth() / 3)
+          .attr("y", d => cpuScale(d[1].cpu))
+          .attr("height", d => 450 - cpuScale(d[1].cpu))
+          .attr("fill", "red");
       }
-      if (this.settingDataMap.get("Show Memory")){
+      if (this.settingDataMap.get("Show Memory")) {
         const gElementMemory = svgElement.append("g");
         gElementMemory
-                .selectAll("rect")
-                .data(Array.from(modulePerformanceMap.entries()))
-                .enter()
-                .append("rect")
-                .attr("x", d => moduleNameScale(d[0]) + moduleNameScale.bandwidth() / 3)
-                .attr("width", moduleNameScale.bandwidth() / 3)
-                .attr("y", d => memoryScale(d[1].memory))
-                .attr("height", d => 450 - memoryScale(d[1].memory))
-                .attr("fill", "blue");
+          .selectAll("rect")
+          .data(Array.from(modulePerformanceMap.entries()))
+          .enter()
+          .append("rect")
+          .attr(
+            "x",
+            d => moduleNameScale(d[0]) + moduleNameScale.bandwidth() / 3
+          )
+          .attr("width", moduleNameScale.bandwidth() / 3)
+          .attr("y", d => memoryScale(d[1].memory))
+          .attr("height", d => 450 - memoryScale(d[1].memory))
+          .attr("fill", "blue");
       }
-      if (this.settingDataMap.get("Show Errors")){
+      if (this.settingDataMap.get("Show Errors")) {
         const gElementErrors = svgElement.append("g");
         gElementErrors
-                .selectAll("rect")
-                .data(Array.from(modulePerformanceMap.entries()))
-                .enter()
-                .append("rect")
-                .attr(
-                        "x",
-                        d => moduleNameScale(d[0]) + (moduleNameScale.bandwidth() / 3) * 2
-                )
-                .attr("width", moduleNameScale.bandwidth() / 3)
-                .attr("y", d => errorScale(d[1].errors))
-                .attr("height", d => 450 - errorScale(d[1].errors))
-                .attr("fill", "green");
+          .selectAll("rect")
+          .data(Array.from(modulePerformanceMap.entries()))
+          .enter()
+          .append("rect")
+          .attr(
+            "x",
+            d => moduleNameScale(d[0]) + (moduleNameScale.bandwidth() / 3) * 2
+          )
+          .attr("width", moduleNameScale.bandwidth() / 3)
+          .attr("y", d => errorScale(d[1].errors))
+          .attr("height", d => 450 - errorScale(d[1].errors))
+          .attr("fill", "green");
       }
       const guideBoxes = svgElement
         .append("g")
