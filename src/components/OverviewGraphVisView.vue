@@ -144,7 +144,24 @@ export default {
         })
         .style("pointer-events", "none")
         .attr("marker-end", "url(#arrowhead)");
-      node.append("title").text(d => JSON.stringify(d));
+      node.append("title").text(d => {
+        let result =
+          "Label: " + d.label + "\nType: " + d.type + "\nTime: " + d.time;
+        if (d.label === "file") {
+          result += "\nSource: " + d.SOURCE;
+        } else if (d.label === "object") {
+          result += "\nValue: " + d.VALUE;
+        } else if (d.label === "module") {
+          result +=
+            "\nCPU: " +
+            d.cpu_run +
+            "\nMemory: " +
+            d.memory_run +
+            "\nError: " +
+            d.error;
+        }
+        return result;
+      });
 
       const ticked = function() {
         link
