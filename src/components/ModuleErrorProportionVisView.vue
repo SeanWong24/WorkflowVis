@@ -138,7 +138,7 @@ export default {
         .scaleOrdinal()
         .domain([true, false])
         .range(["green", "red"]);
-      if (this.settingDataMap.get("Show Module Proportion")){
+
         const gInnerPie = gElement.append("g");
         const label = d3
                 .arc()
@@ -165,29 +165,21 @@ export default {
                   tempMap.set("error", !previousValue);
                   this.updateSelection();
                 });
-        innerPiePaths.append("text")
-                // .attr("transform", function(d) {
-                //   return "translate(" + label.centroid(d) + ")";
-                // })
-                .attr("text-anchor", "middle")
-                .attr("color","black")
-                .text(function(d) {
-                  // console.log(d.data[0]);
-                  return d.data[0];
-                });
 
-        // innerPiePaths
-        //   .append("title")
-        //   .text(
-        //     d =>
-        //       d.data[0] +
-        //       "\n" +
-        //       ((d.value / modules.length) * 100).toFixed(2) +
-        //       "%"
-        //   );
-      }
+        innerPiePaths
+          .append("title")
+          .text(
+            d =>
+              d.data[0] +
+              "\n" +
+              ((d.value / modules.length) * 100).toFixed(2) +
+              "%"
+          );
 
-      if (this.settingDataMap.get("Show Success and Error Proportion")){
+
+        const arc = d3.arc()
+                .innerRadius(100)
+                .outerRadius(150)
         const labelOutter = d3.arc()
                 .innerRadius(100)
                 .outerRadius(150)
@@ -214,6 +206,16 @@ export default {
                   tempMap.set(status, !tempMap.get(status));
                   this.updateSelection();
                 });
+        svgElement
+                .selectAll('path')
+                .data(pieOutter)
+                .enter()
+                .append('text')
+                .text(function(d){ return d})
+                .attr("transform", function(d) { return "translate(" + labelOutter.centroid(d) + ")";  })
+                .style("text-anchor", "middle")
+                .style("font-size", 17)
+
         outterPiePaths.append("text")
                 .attr("transform", function(d) {
                   return "translate(" + labelOutter.centroid(d) + ")";
@@ -222,7 +224,7 @@ export default {
                 .attr("color","black")
                 .text(function(d) {
                   console.log(d.data[0]);
-                  return d.data[0];
+
                 });
         outterPiePaths
                 .append("title")
@@ -233,7 +235,41 @@ export default {
                                 ((d.value / modules.length) * 100).toFixed(2) +
                                 "%"
                 );
-      }
+
+        svgElement
+                .selectAll('allPolylines')
+                .data(pieOutter)
+                .enter()
+                .append('polyline')
+                .attr("stroke", "black")
+                .style("fill", "none")
+                .attr("stroke-width", 1)
+                .attr('points', function(d) {
+                  console.log(d);
+                  var posA = label.centroid(d) ;// line insertion in the slice
+                  var posB = labelOutter.centroid(d) ;// line break: we use the other arc generator that has been built only for that
+                  var posC = labelOutter.centroid(d); // Label position = almost the same as posB
+                  var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2; // we need the angle to see if the X position will be at the extreme right or extreme left
+                  posC[0] = 150 * 0.95 * (midangle < Math.PI ? 1 : -1); // multiply by 1 or -1 to put it on the right or on the left
+                  return [posA, posB, posC]
+                })
+      svgElement
+              .selectAll('allLabels')
+              .data(pieOutter)
+              .enter()
+              .append('text')
+              .text( function(d) { console.log(d.data.key) ; return d.data[0] } )
+              .attr('transform', function(d) {
+                var pos = labelOutter.centroid(d);
+                var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                pos[0] = 150 * 0.99 * (midangle < Math.PI ? 1 : -1);
+                return 'translate(' + pos + ')';
+              })
+              .style('text-anchor', function(d) {
+                var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                return (midangle < Math.PI ? 'start' : 'end')
+              })
+
     },
     updateSelection() {
       d3.select(this.$refs.mainSvg)
