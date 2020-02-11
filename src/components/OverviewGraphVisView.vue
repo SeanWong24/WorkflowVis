@@ -17,6 +17,17 @@ export default {
   name: "OverviewGraphVisView",
   displayedName: "Overview Graph",
   extends: DefaultVisView,
+  data: () => ({
+    selectedModules: [],
+    settingDefinitions: [
+      {
+        label: "Show Labels",
+        type: "checkbox"
+      }],
+    settingDataMap: new Map([
+      ["Show Labels", false],
+    ])
+  }),
   methods: {
     generateVis(value) {
       const svgElement = d3.select(this.$refs.mainSvg);
@@ -38,7 +49,7 @@ export default {
           d3
             .forceLink(data.edges)
             .id(d => d.id)
-            .distance(100)
+            .distance(50)
             .strength(1)
         )
 
@@ -144,7 +155,10 @@ export default {
         })
         .style("pointer-events", "none")
         .attr("marker-end", "url(#arrowhead)");
-      node.append("title").text(d => {
+
+
+      node.append("title")
+        .text(d => {
         let result =
           "Label: " + d.label + "\nType: " + d.type + "\nTime: " + d.time;
         if (d.label === "file") {
@@ -160,8 +174,29 @@ export default {
             "\nError: " +
             d.error;
         }
+
         return result;
       });
+
+
+        var text = svgElement.selectAll("text")
+                .data(data.nodes)
+                .enter()
+                .append("text");
+        var textLabels = text
+                .text(function (d) {
+                  if (d.label === "module")
+                    return ("Module: " + d.NAME);
+                  if (d.label == "file")
+                    return ("Source of File:" + d.SOURCE);
+                  if (d.label == "object")
+                    return ("Object");
+                })
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "10px");
+
+
+
 
       const ticked = function() {
         link
@@ -171,6 +206,10 @@ export default {
           .attr("y2", d => d.target.y);
 
         node.attr("transform", d => "translate(" + d.x + "," + d.y + ")");
+          text
+                  .attr("x", function(d) { return d.x; })
+                  .attr("y", function(d) { return d.y; })
+
       };
       link.attr("d", function(d) {
         return (
@@ -188,6 +227,9 @@ export default {
       simulation.nodes(data.nodes).on("tick", ticked);
 
       simulation.force("link").links(data.edges);
+    },
+    applySettings() {
+      this.generateVis(this.dataset);
     }
   }
 };
