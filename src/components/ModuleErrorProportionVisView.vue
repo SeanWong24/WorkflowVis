@@ -178,8 +178,8 @@ export default {
 
 
         const arc = d3.arc()
-                .innerRadius(100)
-                .outerRadius(150)
+                .innerRadius(150)
+                .outerRadius(200)
         const labelOutter = d3.arc()
                 .innerRadius(100)
                 .outerRadius(150)
@@ -206,26 +206,6 @@ export default {
                   tempMap.set(status, !tempMap.get(status));
                   this.updateSelection();
                 });
-        svgElement
-                .selectAll('path')
-                .data(pieOutter)
-                .enter()
-                .append('text')
-                .text(function(d){ return d})
-                .attr("transform", function(d) { return "translate(" + labelOutter.centroid(d) + ")";  })
-                .style("text-anchor", "middle")
-                .style("font-size", 17)
-
-        outterPiePaths.append("text")
-                .attr("transform", function(d) {
-                  return "translate(" + labelOutter.centroid(d) + ")";
-                })
-                .attr("text-anchor", "middle")
-                .attr("color","black")
-                .text(function(d) {
-                  console.log(d.data[0]);
-
-                });
         outterPiePaths
                 .append("title")
                 .text(
@@ -235,8 +215,7 @@ export default {
                                 ((d.value / modules.length) * 100).toFixed(2) +
                                 "%"
                 );
-
-        svgElement
+        gOutterPie
                 .selectAll('allPolylines')
                 .data(pieOutter)
                 .enter()
@@ -245,24 +224,26 @@ export default {
                 .style("fill", "none")
                 .attr("stroke-width", 1)
                 .attr('points', function(d) {
-                  console.log(d);
-                  var posA = label.centroid(d) ;// line insertion in the slice
-                  var posB = labelOutter.centroid(d) ;// line break: we use the other arc generator that has been built only for that
-                  var posC = labelOutter.centroid(d); // Label position = almost the same as posB
+                  var posA = labelOutter.centroid(d) ;// line insertion in the slice
+                  var posB = arc.centroid(d) ;// line break: we use the other arc generator that has been built only for that
+                  var posC = arc.centroid(d); // Label position = almost the same as posB
                   var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2; // we need the angle to see if the X position will be at the extreme right or extreme left
-                  posC[0] = 150 * 0.95 * (midangle < Math.PI ? 1 : -1); // multiply by 1 or -1 to put it on the right or on the left
+                  posC[0] = 150 * 0.95 * (midangle < Math.PI ? 1.1 : -1); // multiply by 1 or -1 to put it on the right or on the left
                   return [posA, posB, posC]
                 })
-      svgElement
+                .text(function(d) {
+                  if(d.endAngle - d.startAngle<4*Math.PI/180){return ""}
+                  return d.data.key; });
+      gOutterPie
               .selectAll('allLabels')
               .data(pieOutter)
               .enter()
               .append('text')
-              .text( function(d) { console.log(d.data.key) ; return d.data[0] } )
+              .text( function(d) { return d.data[0] } )
               .attr('transform', function(d) {
-                var pos = labelOutter.centroid(d);
+                var pos = arc.centroid(d);
                 var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
-                pos[0] = 150 * 0.99 * (midangle < Math.PI ? 1 : -1);
+                pos[0] = 150 * 0.99 * (midangle < Math.PI ? 1.1 : - 1.2);
                 return 'translate(' + pos + ')';
               })
               .style('text-anchor', function(d) {
